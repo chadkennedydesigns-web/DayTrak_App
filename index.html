@@ -96,7 +96,6 @@ svg.i.sm{width:18px;height:18px}
 .nav-sep{height:1px;background:var(--border);margin:8px 12px}
 main{flex:1;min-width:0;padding:16px 28px 48px;max-width:1320px}
 .scrim{display:none;position:fixed;inset:0;background:var(--scrim);z-index:45}
-.bottombar{display:none}
 #menuBtn{display:none}
 @media (max-width:1023px){
   #menuBtn{display:inline-grid}
@@ -112,11 +111,7 @@ main{flex:1;min-width:0;padding:16px 28px 48px;max-width:1320px}
   .topbar{border-bottom-color:var(--topbar-border);background:linear-gradient(to right,var(--drawer-bg) calc(var(--drawer-w) - 1px),var(--drawer-edge) calc(var(--drawer-w) - 1px),var(--drawer-edge) var(--drawer-w),var(--bg) var(--drawer-w))}
 }
 @media (max-width:599px){
-  .bottombar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);box-shadow:0 -1px 3px rgba(0,0,0,.15);padding-bottom:env(safe-area-inset-bottom)}
-  .bottombar a,.bottombar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;font-size:12px;font-weight:500;color:var(--text-2);text-decoration:none;border:0;background:transparent;cursor:pointer;padding:4px 0}
-  .bottombar [aria-current="page"]{color:var(--primary)}
-  .bottombar [aria-current="page"] svg{background:var(--primary-soft);color:var(--primary-text);border-radius:14px;width:52px;padding:2px 14px;box-sizing:border-box;height:28px}
-  main{padding-bottom:96px}
+  main{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
   .brand{font-size:18px}
 }
 
@@ -380,10 +375,11 @@ textarea.input{min-height:80px;resize:vertical}
 .detail-list dd{margin:0;overflow-wrap:anywhere}
 
 /* ---------- Snackbar ---------- */
-#snackbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,180%);background:#303134;color:#f1f3f4;border-radius:8px;padding:6px 8px 6px 16px;min-height:48px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-3);z-index:200;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s;max-width:calc(100vw - 32px);font-size:14px;opacity:0;visibility:hidden;pointer-events:none}
+#snackbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,calc(100% + 200px));background:#303134;color:#f1f3f4;border-radius:8px;padding:6px 8px 6px 16px;min-height:48px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-3);z-index:200;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s;max-width:calc(100vw - 32px);font-size:14px;opacity:0;visibility:hidden;pointer-events:none}
+#snackbar:empty{display:none}
 #snackbar.show{transform:translate(-50%,0);opacity:1;visibility:visible;pointer-events:auto;transition:transform .2s ease,opacity .2s ease,visibility 0s}
 #snackbar button{background:transparent;border:0;color:#8ab4f8;font-weight:600;min-height:44px;padding:0 12px;cursor:pointer;border-radius:6px}
-@media (max-width:599px){ #snackbar{bottom:calc(76px + env(safe-area-inset-bottom))} }
+@media (max-width:599px){ #snackbar{bottom:calc(16px + env(safe-area-inset-bottom))} }
 
 /* ---------- Recovery ---------- */
 .recovery{max-width:620px;margin:40px auto}
@@ -456,9 +452,6 @@ textarea.input{min-height:80px;resize:vertical}
 .nav-item svg{color:var(--c,var(--text-2))}
 .nav-item[aria-current="page"]{background:var(--primary-soft);background:color-mix(in srgb,var(--c,var(--primary)) 16%,var(--drawer-bg));color:var(--text)}
 .nav-item[aria-current="page"] svg{color:var(--c,var(--primary))}
-.bottombar a svg{color:var(--c,var(--text-2))}
-.bottombar [aria-current="page"]{color:var(--text)}
-.bottombar [aria-current="page"] svg{background:color-mix(in srgb,var(--c) 18%,var(--surface));color:var(--c)}
 .page-head h1{display:flex;align-items:center;gap:12px}
 .h-ic{width:44px;height:44px;border-radius:14px;display:inline-grid;place-items:center;flex:none;background:var(--surface-2);background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--c)}
 
@@ -521,7 +514,6 @@ textarea.input{min-height:80px;resize:vertical}
   <main id="main" tabindex="-1"></main>
 </div>
 <div class="scrim" id="scrim" data-act="closeDrawer"></div>
-<nav class="bottombar" id="bottombar" aria-label="Quick"></nav>
 <div id="modal-root"></div>
 <div id="snackbar" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden data-chg="importFile">
@@ -561,7 +553,6 @@ const ROUTES = [
   {id:'notes', label:'Notes', icon:'note', color:'var(--c-note)'},
   {id:'dates', label:'Important Dates', icon:'event', color:'var(--c-star)'},
   {id:'settings', label:'Settings', icon:'settings', color:'var(--text-2)'}];
-const BOTTOM_ROUTES = ['dashboard','calendar','workouts','tasks'];
 
 const ICONS = {
   logo:'<path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11zm-8.2-2.4l-3.3-3.3 1.4-1.4 1.9 1.9 4.6-4.6 1.4 1.4-6 6z"/>',
@@ -1123,10 +1114,17 @@ let toastTimer = null;
 function toast(msg, undo){
   const el = $('#snackbar');
   el.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button type="button">Undo</button>' : ''}`;
-  if(undo) el.querySelector('button').addEventListener('click', () => { el.classList.remove('show'); undo(); });
+  if(undo) el.querySelector('button').addEventListener('click', () => { hideToast(); undo(); });
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), undo ? 6000 : 3200);
+  toastTimer = setTimeout(hideToast, undo ? 6000 : 3200);
+}
+/* Hides the message bar and empties it once it has slid away, so nothing is ever left showing. */
+function hideToast(){
+  const el = $('#snackbar');
+  clearTimeout(toastTimer);
+  el.classList.remove('show');
+  toastTimer = setTimeout(() => { if(!el.classList.contains('show')) el.innerHTML = ''; }, 250);
 }
 
 /* ----- Modal ----- */
@@ -3116,8 +3114,6 @@ function renderNav(){
   const link = r => `<a class="nav-item" href="#/${r.id}" style="--c:${r.color}" ${ui.route === r.id ? 'aria-current="page"' : ''}>${icon(r.icon)}<span>${r.label}</span></a>`;
   $('#drawer').innerHTML = `<div class="drawer-head"><span class="brand-mark">${icon('logo')}</span><span>${esc(APP_NAME)}</span></div>` +
     ROUTES.filter(r => r.id !== 'settings').map(link).join('') + '<div class="nav-sep"></div>' + link(ROUTES.find(r => r.id === 'settings'));
-  $('#bottombar').innerHTML = BOTTOM_ROUTES.map(id => { const r = ROUTES.find(x => x.id === id); return `<a href="#/${r.id}" style="--c:${r.color}" ${ui.route === r.id ? 'aria-current="page"' : ''}>${icon(r.icon)}<span>${r.label}</span></a>`; }).join('') +
-    `<button type="button" data-act="openDrawer" aria-label="More pages">${icon('menu')}<span>More</span></button>`;
 }
 function openDrawer(){ $('#drawer').classList.add('open'); $('#scrim').classList.add('show'); $('#menuBtn').setAttribute('aria-expanded', 'true'); const f = $('#drawer a'); if(f) f.focus(); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('show'); $('#menuBtn').setAttribute('aria-expanded', 'false'); }
