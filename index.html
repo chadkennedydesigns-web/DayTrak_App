@@ -380,8 +380,8 @@ textarea.input{min-height:80px;resize:vertical}
 .detail-list dd{margin:0;overflow-wrap:anywhere}
 
 /* ---------- Snackbar ---------- */
-#snackbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,180%);background:#303134;color:#f1f3f4;border-radius:8px;padding:6px 8px 6px 16px;min-height:48px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-3);z-index:200;transition:transform .2s ease;max-width:calc(100vw - 32px);font-size:14px}
-#snackbar.show{transform:translate(-50%,0)}
+#snackbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,180%);background:#303134;color:#f1f3f4;border-radius:8px;padding:6px 8px 6px 16px;min-height:48px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-3);z-index:200;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s;max-width:calc(100vw - 32px);font-size:14px;opacity:0;visibility:hidden;pointer-events:none}
+#snackbar.show{transform:translate(-50%,0);opacity:1;visibility:visible;pointer-events:auto;transition:transform .2s ease,opacity .2s ease,visibility 0s}
 #snackbar button{background:transparent;border:0;color:#8ab4f8;font-weight:600;min-height:44px;padding:0 12px;cursor:pointer;border-radius:6px}
 @media (max-width:599px){ #snackbar{bottom:calc(76px + env(safe-area-inset-bottom))} }
 
