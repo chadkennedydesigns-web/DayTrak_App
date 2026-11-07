@@ -423,6 +423,7 @@ textarea.input{min-height:80px;resize:vertical}
 .note-item.active{background:color-mix(in srgb,var(--c-note) 16%,var(--card-bg))}
 .note-item .name{font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .note-item .meta{font-size:12px;color:var(--text-2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-note .meta{font-size:13px;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3}
 .note-ed{display:flex;flex-direction:column;gap:10px}
 .ne-top{display:flex;align-items:center;gap:8px}
 .ne-title{flex:1;min-width:0;border:0;background:none;font:500 22px/1.3 Arial,Helvetica,sans-serif;color:var(--text);padding:6px 4px;border-radius:8px}
@@ -792,7 +793,7 @@ const Recurrence = {
     const n = r.interval;
     let s;
     if(r.freq === 'none') return 'Once, ' + fmtDate(r.start, 'short');
-    if(r.freq === 'day') s = n === 1 ? 'Every day' : `Every ${n} days`;
+    if(r.freq === 'day') s = n === 1 ? 'Every day' : n === 2 ? 'Every other day' : `Every ${n} days`;
     else if(r.freq === 'week'){
       const wd = r.weekdays;
       const days = wd.length === 7 ? 'every day' : (wd.join() === '0,1,2,3,4' ? 'weekdays' : (wd.join() === '5,6' ? 'weekends' : wd.map(i => WD_SHORT[i]).join(', ')));
@@ -1228,18 +1229,21 @@ function RecurrenceEditor(host, initial, opts){
     const n = Number.isInteger(r.interval) ? r.interval : 2;
     return ({day: n === 1 ? 'day' : 'days', week: n === 1 ? 'week' : 'weeks', month: n === 1 ? 'month' : 'months'})[r.freq] || '';
   };
+  /* With dayPresets, "Every day" and "Every other day" are their own Repeat choices (day repeats with interval 1 or 2). */
+  const freqChoice = () => o.dayPresets && r.freq === 'day' && (r.interval === 1 || r.interval === 2) ? (r.interval === 1 ? 'daily' : 'alt') : r.freq;
   function html(){
     const opt = (v, l, cur) => `<option value="${v}" ${String(cur) === String(v) ? 'selected' : ''}>${l}</option>`;
+    const fc = freqChoice(), preset = fc === 'daily' || fc === 'alt';
     let h = `<div class="rec">
       <div class="row">
         <label class="field"><span class="field-label">${esc(o.startLabel)}</span><input class="input" type="date" data-r="start" value="${esc(r.start)}" required></label>
         <label class="field"><span class="field-label">Repeat</span><select class="input" data-r="freq">
-          ${o.allowNone ? opt('none', "Doesn't repeat", r.freq) : ''}${opt('day', 'Every few days', r.freq)}${opt('week', 'Weekly, on chosen days', r.freq)}${opt('month', 'Monthly, on one day', r.freq)}
+          ${o.allowNone ? opt('none', "Doesn't repeat", fc) : ''}${o.dayPresets ? opt('daily', 'Every day', fc) + opt('alt', 'Every other day', fc) : ''}${opt('day', 'Every few days', fc)}${opt('week', 'Weekly, on chosen days', fc)}${opt('month', 'Monthly, on one day', fc)}
         </select></label>
       </div>`;
     if(r.freq !== 'none'){
-      h += `<div class="row">
-        <label class="field"><span class="field-label">Repeat every</span><span class="input-suffix"><input class="input" type="number" inputmode="numeric" min="1" max="365" step="1" data-r="interval" value="${esc(raw.interval)}"><span data-r-unit>${unitWord()}</span></span></label>`;
+      h += `<div class="row">` + (preset ? '' : `
+        <label class="field"><span class="field-label">Repeat every</span><span class="input-suffix"><input class="input" type="number" inputmode="numeric" min="1" max="365" step="1" data-r="interval" value="${esc(raw.interval)}"><span data-r-unit>${unitWord()}</span></span></label>`);
       if(r.freq === 'month'){
         h += `<label class="field"><span class="field-label">On day</span><select class="input" data-r="monthDay">`;
         for(let i = 1; i <= 31; i++) h += opt(i, ordinal(i), r.monthDay);
@@ -1272,6 +1276,7 @@ function RecurrenceEditor(host, initial, opts){
     const et = q('[data-r=endType]'); if(et) r.endType = et.value;
     const ed = q('[data-r=endDate]'); if(ed) r.endDate = ed.value;
     const c = q('[data-r=count]'); if(c){ raw.count = c.value; r.count = parseWhole(c.value); }
+    if(f && (f.value === 'daily' || f.value === 'alt')){ r.freq = 'day'; r.interval = f.value === 'daily' ? 1 : 2; raw.interval = String(r.interval); }
   }
   function preview(){
     const p = host.querySelector('.rec-preview'); if(!p) return;
@@ -1296,6 +1301,7 @@ function RecurrenceEditor(host, initial, opts){
       read();
       if(k === 'freq' && Dates.isValid(r.start)){
         if(r.freq === 'week' && !r.weekdays.length) r.weekdays = [Dates.dow(r.start)];
+        if(o.dayPresets && e.target.value === 'day' && !(r.interval > 2)){ r.interval = 3; raw.interval = '3'; } // "Every few days" starts at 3 so it stays distinct from the presets
         if(r.freq === 'month' && r.monthDay !== 'last' && !Number.isInteger(r.monthDay)) r.monthDay = Dates.ymd(r.start)[2];
       }
       if(k === 'endType' && r.endType === 'date' && !Dates.isValid(r.endDate) && Dates.isValid(r.start)) r.endDate = Dates.addMonths(r.start, 3);
@@ -1770,7 +1776,7 @@ function openSuppEditor(id, opts){
       <p class="form-error field-error" role="alert"></p></form>`,
     footer: `<button type="button" class="btn text" data-modal-close>Cancel</button><button type="button" class="btn primary" data-save>Save</button>`
   });
-  const ed = RecurrenceEditor(m.body.querySelector('.rec-host'), rec, {startLabel:'Starting on'});
+  const ed = RecurrenceEditor(m.body.querySelector('.rec-host'), rec, {startLabel:'Starting on', dayPresets:true});
   const save = () => {
     const v = k => m.body.querySelector(`[data-v=${k}]`);
     const name = v('name').value.trim();
@@ -2802,7 +2808,7 @@ function dashDates(today){
 function dashNotes(){
   const list = state.notes.slice().sort((a, b) => b.updated - a.updated);
   return `<section class="card type-note">${cardHead('note', 'note', 'Notes', 'notes')}
-    ${list.slice(0, 4).map(n => `<button type="button" class="note-item" data-act="dashNote" data-id="${n.id}"><span class="name">${esc(n.title || 'Untitled')}</span><span class="meta">${esc(noteWhen(n.updated))} · ${esc(noteSnippet(n))}</span></button>`).join('')}
+    ${list.slice(0, 4).map(n => `<button type="button" class="note-item dash-note" data-act="dashNote" data-id="${n.id}"><span class="name">${esc(n.title || 'Untitled')}</span><span class="meta">${esc(noteText(n.html).slice(0, 240) || 'No text yet')}</span></button>`).join('')}
     ${list.length > 4 ? `<p class="hint" style="margin:6px 12px 0">+ ${plural(list.length - 4, 'more note')}</p>` : ''}</section>`;
 }
 function dashUpcoming(today){
@@ -2840,7 +2846,7 @@ function viewNotes(){
   const n = byId(state.notes, ui.noteId);
   return head + `<div class="notes">
     <section class="card note-list" aria-label="All notes">${list.map(x => `<button type="button" class="note-item ${x.id === n.id ? 'active' : ''}" data-act="openNote" data-id="${x.id}" aria-current="${x.id === n.id}">
-      <span class="name" data-note-name="${x.id}">${esc(x.title || 'Untitled')}</span><span class="meta" data-note-snip="${x.id}">${esc(noteWhen(x.updated))} · ${esc(noteSnippet(x))}</span></button>`).join('')}</section>
+      <span class="name" data-note-name="${x.id}">${esc(x.title || 'Untitled')}</span><span class="meta" data-note-snip="${x.id}">${esc(noteSnippet(x))}</span></button>`).join('')}</section>
     <section class="card type-note note-ed">
       <div class="ne-top"><input class="ne-title" data-note-title maxlength="120" placeholder="Title" aria-label="Note title" value="${esc(n.title)}">
         <button class="icon-btn" data-act="delNote" data-id="${n.id}" aria-label="Delete note">${icon('delete')}</button></div>
@@ -2868,7 +2874,7 @@ const NoteEd = {
     n.html = body.innerHTML; n.title = title ? title.value.slice(0, 120) : n.title; n.updated = Date.now();
     const nm = document.querySelector(`[data-note-name="${n.id}"]`), sn = document.querySelector(`[data-note-snip="${n.id}"]`), sv = document.querySelector('[data-note-saved]');
     if(nm) nm.textContent = n.title || 'Untitled';
-    if(sn) sn.textContent = `${noteWhen(n.updated)} · ${noteSnippet(n)}`;
+    if(sn) sn.textContent = noteSnippet(n);
     if(sv) sv.textContent = 'Saving…';
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.flush(), 500);
