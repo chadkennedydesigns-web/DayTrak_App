@@ -423,6 +423,7 @@ textarea.input{min-height:80px;resize:vertical}
 .note-item.active{background:color-mix(in srgb,var(--c-note) 16%,var(--card-bg))}
 .note-item .name{font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .note-item .meta{font-size:12px;color:var(--text-2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#homeBtn{color:var(--c-dash)}
 .icon-btn.pin-on{color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
 .dash-note .meta{font-size:13px;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3}
 .note-ed{display:flex;flex-direction:column;gap:10px}
@@ -510,6 +511,7 @@ textarea.input{min-height:80px;resize:vertical}
   <button class="icon-btn" id="menuBtn" type="button" data-act="openDrawer" aria-label="Open menu" aria-controls="drawer" aria-expanded="false"></button>
   <div class="brand"><span class="brand-mark" id="brandMark"></span><span class="brand-name" id="brandName"></span></div>
   <div class="spacer"></div>
+  <button class="icon-btn" id="homeBtn" type="button" data-act="goDashboard" aria-label="Go to Dashboard" title="Dashboard"></button>
   <button class="icon-btn" id="themeBtn" type="button" data-act="toggleTheme" aria-label="Switch to dark mode"></button>
 </header>
 <div class="layout">
@@ -3585,6 +3587,7 @@ function boot(){
   $('#brandName').textContent = APP_NAME;
   $('#brandMark').innerHTML = icon('logo');
   $('#menuBtn').innerHTML = icon('menu');
+  $('#homeBtn').innerHTML = icon('dashboard');
   ui.narrow = !!(mqNarrow && mqNarrow.matches);
   Storage.init();
   const res = Storage.read();
