@@ -35,7 +35,7 @@
   --text:#1f1f1f; --text-2:#5f6368; --border:#dadce0; --scrim:rgba(32,33,36,.5);
   --danger:#d93025; --on-danger:#ffffff; --danger-soft:#fce8e6;
   --success:#188038; --success-soft:#e6f4ea; --warn:#8a5300; --warn-soft:#fef7e0;
-  --c-workout:#1a73e8; --c-supplement:#00a3bf; --c-savings:#1e8e3e; --c-expense:#d01884; --c-task:#e8710a; --c-habit:#a142f4; --c-note:#5c6bc0; --c-occasion:#fbbc04; --c-star:var(--c-occasion);
+  --c-workout:#1a73e8; --c-supplement:#00a3bf; --c-savings:#1e8e3e; --c-expense:#d01884; --c-task:#e8710a; --c-habit:#a142f4; --c-note:#5c6bc0; --c-occasion:#fbbc04; --c-list:#8d6e63; --c-star:var(--c-occasion);
   --c-cal:#ea4335; --c-dash:#4285f4; --card-border:#e3e6ea;
   --card-bg:#ffffff; --card-s2:#f1f3f4; --card-s3:#e3e5e8;
   --drawer-bg:#ffffff; --drawer-edge:#e3e6ea; --topbar-border:transparent;
@@ -53,7 +53,7 @@
   --text:#e8eaed; --text-2:#a9adb3; --border:#3c4043; --scrim:rgba(0,0,0,.6);
   --danger:#f28b82; --on-danger:#601410; --danger-soft:#3b2120;
   --success:#81c995; --success-soft:#1d3326; --warn:#fdd663; --warn-soft:#3a3115;
-  --c-workout:#8ab4f8; --c-supplement:#4fd1c5; --c-savings:#81c995; --c-expense:#ff8bcb; --c-task:#fcad70; --c-habit:#d7aefb; --c-note:#9fa8da; --c-occasion:#fff176; --c-star:var(--c-occasion);
+  --c-workout:#8ab4f8; --c-supplement:#4fd1c5; --c-savings:#81c995; --c-expense:#ff8bcb; --c-task:#fcad70; --c-habit:#d7aefb; --c-note:#9fa8da; --c-occasion:#fff176; --c-list:#bcaaa4; --c-star:var(--c-occasion);
   --c-cal:#f28b82; --c-dash:#8ab4f8; --card-border:#2e3034;
   --card-bg:#1d1e21; --card-s2:#27282c; --card-s3:#34363b;
   --drawer-bg:#111214; --drawer-edge:#111214; --topbar-border:#3c4043;
@@ -143,7 +143,7 @@ main{flex:1;min-width:0;padding:16px 28px 48px;max-width:1320px}
 .badge.type::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
 .card-foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .divider{height:1px;background:var(--border);margin:12px 0}
-.type-workout{--c:var(--c-workout)} .type-supplement{--c:var(--c-supplement)} .type-savings{--c:var(--c-savings)} .type-expense{--c:var(--c-expense)} .type-task{--c:var(--c-task)} .type-habit{--c:var(--c-habit)} .type-note{--c:var(--c-note)} .type-occasion{--c:var(--c-occasion)} .card-title .ic.type-occasion,.add-kind.type-occasion{--c:var(--c-star)}
+.type-workout{--c:var(--c-workout)} .type-supplement{--c:var(--c-supplement)} .type-savings{--c:var(--c-savings)} .type-expense{--c:var(--c-expense)} .type-task{--c:var(--c-task)} .type-habit{--c:var(--c-habit)} .type-note{--c:var(--c-note)} .type-occasion{--c:var(--c-occasion)} .type-list{--c:var(--c-list)} .card-title .ic.type-occasion,.add-kind.type-occasion{--c:var(--c-star)}
 
 /* ---------- Buttons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:22px;border:1px solid var(--border);background:var(--surface);color:var(--primary);font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s,box-shadow .15s}
@@ -423,6 +423,7 @@ textarea.input{min-height:80px;resize:vertical}
 .note-item.active{background:color-mix(in srgb,var(--c-note) 16%,var(--card-bg))}
 .note-item .name{font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .note-item .meta{font-size:12px;color:var(--text-2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icon-btn.pin-on{color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
 .dash-note .meta{font-size:13px;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3}
 .note-ed{display:flex;flex-direction:column;gap:10px}
 .ne-top{display:flex;align-items:center;gap:8px}
@@ -539,7 +540,7 @@ const TIMINGS = [
   {id:'anytime', label:'Anytime', time:''}];
 const TYPES = {occasion:'Important date', workout:'Workout', supplement:'BioStack', savings:'Savings', expense:'Expense', task:'Task', habit:'Habit'};
 const TYPE_ORDER = ['occasion','workout','task','savings','expense','supplement','habit'];
-const DASH_CARDS = ['tasks','workout','calendar','dates','supplements','habits','savings','expenses','notes','upcoming']; // default dashboard card order
+const DASH_CARDS = ['tasks','workout','calendar','lists','dates','supplements','habits','savings','expenses','notes','upcoming']; // default dashboard card order
 const WEEKDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const WD_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const KG_PER_LB = 0.45359237;
@@ -553,6 +554,7 @@ const ROUTES = [
   {id:'tasks', label:'Tasks', icon:'task', color:'var(--c-task)'},
   {id:'habits', label:'Habits', icon:'habit', color:'var(--c-habit)'},
   {id:'notes', label:'Notes', icon:'note', color:'var(--c-note)'},
+  {id:'lists', label:'Lists', icon:'list', color:'var(--c-list)'},
   {id:'dates', label:'Important Dates', icon:'event', color:'var(--c-star)'},
   {id:'settings', label:'Settings', icon:'settings', color:'var(--text-2)'}];
 
@@ -571,6 +573,7 @@ const ICONS = {
   dark:'<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>',
   light:'<path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM2 13h2a1 1 0 0 0 0-2H2a1 1 0 0 0 0 2zm18 0h2a1 1 0 0 0 0-2h-2a1 1 0 0 0 0 2zM11 2v2a1 1 0 0 0 2 0V2a1 1 0 0 0-2 0zm0 18v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-2 0zM5.99 4.58a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41L5.99 4.58zm12.37 12.37a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41l-1.06-1.06zm1.06-10.96a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06zM7.05 18.36a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06z"/>',
   add:'<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>',
+  list:'<path d="M22 7h-9v2h9V7zm0 8h-9v2h9v-2zM5.54 11L2 7.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 11zm0 8L2 15.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 19z"/>',
   event:'<path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>',
   edit:'<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>',
   delete:'<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>',
@@ -896,7 +899,7 @@ function emptyState(){
   return {
     schemaVersion: SCHEMA_VERSION,
     settings: {units:'imperial', theme:'system', calView:'month', name:'', calHidden:[], dashOrder:DASH_CARDS.slice(), dashHidden:[], weekStart:'mon'},
-    exercises: [], templates: [], sessions: [], supplements: [], goals: [], expenses: [], tasks: [], habits: [], notes: [], occasions: []
+    exercises: [], templates: [], sessions: [], supplements: [], goals: [], expenses: [], tasks: [], habits: [], notes: [], occasions: [], lists: []
   };
 }
 let normalizeSkipped = 0;
@@ -986,6 +989,11 @@ function sanitizeNoteHtml(html){
 function normNote(o){
   return {id: idOf(o.id), title: str(o.title, 120), html: sanitizeNoteHtml(o.html), updated: clampNum(o.updated, 0, 1e14, Date.now()), sample: !!o.sample};
 }
+function normList(o){
+  const name = str(o.name, 80); if(!name) return null;
+  return {id: idOf(o.id), name, dash: !!o.dash, sample: !!o.sample,
+    items: arr(o.items).filter(isObj).map(i => { const text = str(i.text, 200); if(!text){ normalizeSkipped++; return null; } return {id: idOf(i.id), text, done: !!i.done}; }).filter(Boolean).slice(0, 500)};
+}
 function normOccasion(o){
   const title = str(o.title, 120); if(!title || !Dates.isValid(o.date)) return null;
   return {id: idOf(o.id), title, date: o.date, yearly: o.yearly !== false, sample: !!o.sample};
@@ -1041,6 +1049,7 @@ function normalizeState(d){
   s.habits = safeMap(d.habits, o => normHabit(o, today));
   s.notes = safeMap(d.notes, normNote);
   s.occasions = safeMap(d.occasions, normOccasion);
+  s.lists = safeMap(d.lists, normList);
   return s;
 }
 /* Upgrades older saved data step by step. Add a new "if(v < N)" block for each future schema. */
@@ -1927,6 +1936,65 @@ function openExpenseItemEditor(expId, itemId, opts){
   m.body.querySelector('form').addEventListener('submit', ev => { ev.preventDefault(); save(); });
 }
 /* ===========================================================================
+   LISTS — simple checklists (groceries, packing...). Pinned lists show on the Dashboard.
+   =========================================================================== */
+function listItemsHTML(l){
+  const items = l.items.filter(i => !i.done).concat(l.items.filter(i => i.done)); // checked items sink to the bottom
+  return items.length ? items.map(i => `<div class="check-row ${i.done ? 'done' : ''}">
+      <label class="check-hit"><input type="checkbox" data-chg="listItem" data-id="${l.id}" data-x="${i.id}" ${i.done ? 'checked' : ''}><span class="t"><span class="name">${esc(i.text)}</span></span></label>
+      <button class="icon-btn" data-act="delListItem" data-id="${l.id}" data-x="${i.id}" aria-label="Remove ${esc(i.text)}">${icon('close')}</button></div>`).join('')
+    : '<p class="empty">No items yet.</p>';
+}
+function listAddForm(l){
+  return `<form data-form="listAdd" data-id="${l.id}" class="add-skip" style="margin-top:8px"><input class="input" name="item" maxlength="200" placeholder="Add an item…" autocomplete="off" aria-label="Add an item to ${esc(l.name)}"><button class="btn tonal" type="submit">${icon('add')} Add</button></form>`;
+}
+function listCount(l){ return `${l.items.filter(i => i.done).length}/${l.items.length}`; }
+function viewLists(){
+  const head = sub => `<div class="page-head"><div><h1>Lists</h1><p class="sub">${sub}</p></div><div class="actions"><button class="btn primary" data-act="newList">${icon('add')} New list</button></div></div>`;
+  if(!state.lists.length) return head('Simple checklists for groceries, packing and more.')
+    + emptyCard('list', 'No lists yet', 'Make a list like "Groceries", add items, and tick them off as you go.', `<button class="btn primary" data-act="newList">${icon('add')} New list</button>`);
+  return head('Tick items off as you go. Use the Dashboard button on a list to show it there.') + `<div class="grid masonry">${state.lists.map(l => {
+    const checked = l.items.some(i => i.done);
+    return `<section class="card type-list"><div class="card-head"><div class="title-wrap"><h2 class="card-title">${esc(l.name)} <span class="badge">${listCount(l)}</span></h2></div>
+        <button class="icon-btn ${l.dash ? 'pin-on' : ''}" data-act="pinList" data-id="${l.id}" aria-pressed="${l.dash}" aria-label="${l.dash ? 'Remove from' : 'Show on'} Dashboard" title="${l.dash ? 'On the Dashboard - click to remove' : 'Show on the Dashboard'}">${icon('dashboard')}</button>
+        <button class="icon-btn" data-act="editList" data-id="${l.id}" aria-label="Rename ${esc(l.name)}">${icon('edit')}</button>
+        <button class="icon-btn" data-act="delList" data-id="${l.id}" aria-label="Delete ${esc(l.name)}">${icon('delete')}</button></div>
+      ${l.dash ? '<p class="hint" style="margin:-4px 0 6px">Shown on the Dashboard</p>' : ''}
+      ${listItemsHTML(l)}${listAddForm(l)}
+      ${checked ? `<div class="card-foot"><button class="btn text" data-act="uncheckList" data-id="${l.id}">Uncheck all</button><button class="btn text danger" data-act="clearList" data-id="${l.id}">Remove checked</button></div>` : ''}
+    </section>`;
+  }).join('')}</div>`;
+}
+function openListEditor(id){
+  const src = id ? byId(state.lists, id) : null;
+  if(id && !src){ toast('That list no longer exists.'); return; }
+  const m = Modal.open({
+    title: src ? 'Edit list' : 'New list',
+    body: `<form novalidate>
+      <label class="field"><span class="field-label">List name</span><input class="input" data-v="name" maxlength="80" placeholder="e.g. Groceries" value="${esc(src ? src.name : '')}"></label>
+      <label class="check-line"><input type="checkbox" data-v="dash" ${(src ? src.dash : !state.lists.some(l => l.dash)) ? 'checked' : ''}><span>Show this list on the Dashboard</span></label>
+      <p class="form-error field-error" role="alert"></p></form>`,
+    footer: `<button type="button" class="btn text" data-modal-close>Cancel</button><button type="button" class="btn primary" data-save>${src ? 'Save' : 'Create list'}</button>`
+  });
+  const save = () => {
+    const nEl = m.body.querySelector('[data-v=name]');
+    const name = nEl.value.trim(); if(!name) return setFormError(m, 'Give the list a name, like "Groceries".', nEl);
+    const l = src || {id: uid(), items: [], sample:false};
+    Object.assign(l, {name: name.slice(0, 80), dash: m.body.querySelector('[data-v=dash]').checked});
+    if(!src){ state.lists.push(l); ui.refocus = `[data-form="listAdd"][data-id="${l.id}"] [name=item]`; }
+    m.close(); commit(); toast(src ? 'List saved' : 'List created');
+  };
+  m.foot.querySelector('[data-save]').addEventListener('click', save);
+  m.body.querySelector('form').addEventListener('submit', ev => { ev.preventDefault(); save(); });
+}
+function dashLists(){
+  const pinned = state.lists.filter(l => l.dash);
+  const one = pinned.length === 1;
+  return `<section class="card type-list">${cardHead('list', 'list', one ? esc(pinned[0].name) : 'Lists', 'lists')}
+    ${pinned.map(l => (one ? '' : `<div class="group-label">${esc(l.name)} · ${listCount(l)}</div>`) + listItemsHTML(l) + listAddForm(l)).join('')}</section>`;
+}
+
+/* ===========================================================================
    IMPORTANT DATES — birthdays, anniversaries and other occasions on the calendar
    =========================================================================== */
 function occasionWhen(d, today){
@@ -2640,16 +2708,17 @@ function viewDashboard(){
     ${dashCardsHTML(today, tasks, supps, habits)}`;
 }
 /* ---- Dashboard cards: user-arranged order (settings.dashOrder) ---- */
-const DASH_NAMES = {tasks:'Tasks', workout:'Workouts', calendar:'Calendar', supplements:'BioStack', habits:'Habits', savings:'Savings', expenses:'Expenses', notes:'Notes', dates:'Important Dates', upcoming:'Next 7 days'};
+const DASH_NAMES = {tasks:'Tasks', workout:'Workouts', calendar:'Calendar', supplements:'BioStack', habits:'Habits', savings:'Savings', expenses:'Expenses', notes:'Notes', lists:'Lists', dates:'Important Dates', upcoming:'Next 7 days'};
 function dashCardsHTML(today, tasks, supps, habits){
   const build = {
     tasks: () => dashTasks(today, tasks), workout: () => dashWorkout(today), calendar: () => dashMiniCal(today),
-    supplements: () => dashSupps(today, supps), habits: () => dashHabits(today, habits), savings: () => dashSavings(), expenses: () => dashExpenses(), notes: () => dashNotes(), dates: () => dashDates(today), upcoming: () => dashUpcoming(today)
+    supplements: () => dashSupps(today, supps), habits: () => dashHabits(today, habits), savings: () => dashSavings(), expenses: () => dashExpenses(), notes: () => dashNotes(), dates: () => dashDates(today), lists: () => dashLists(), upcoming: () => dashUpcoming(today)
   };
   const order = state.settings.dashOrder, arranging = ui.arrange, n = order.length, hidden = state.settings.dashHidden;
   const cards = order.map((id, i) => {
     if(id === 'notes' && !state.notes.length) return ''; // only shown once there are notes
-    if(id === 'dates' && !state.occasions.length) return ''; // only shown once there are important dates
+    if(id === 'dates' && !state.occasions.length) return '';
+    if(id === 'lists' && !state.lists.some(l => l.dash)) return ''; // only shown once a list is pinned to the Dashboard // only shown once there are important dates
     const off = hidden.includes(id);
     if(off && !arranging) return '';
     const html = build[id]();
@@ -2960,7 +3029,7 @@ function viewSettings(){
       <p class="hint" style="margin:0">${esc(APP_NAME)} version ${APP_VERSION} · data format ${SCHEMA_VERSION}. Works offline. No accounts, no tracking.</p></section>
   </div>`;
 }
-const COLLECTIONS = [['templates','Workouts'],['sessions','Logged workouts'],['exercises','Saved exercises'],['supplements','BioStack'],['goals','Savings goals'],['expenses','Expense budgets'],['tasks','Tasks'],['habits','Habits'],['notes','Notes'],['occasions','Important dates']];
+const COLLECTIONS = [['templates','Workouts'],['sessions','Logged workouts'],['exercises','Saved exercises'],['supplements','BioStack'],['goals','Savings goals'],['expenses','Expense budgets'],['tasks','Tasks'],['habits','Habits'],['notes','Notes'],['occasions','Important dates'],['lists','Lists']];
 function exportData(){
   const payload = Object.assign({app: APP_NAME, exportedAt: new Date().toISOString()}, state);
   download(`daytrak-backup-${Dates.today()}.json`, JSON.stringify(payload, null, 2));
@@ -3012,7 +3081,7 @@ function clearAllData(){
   });
 }
 function clearSampleData(){
-  for(const k of ['templates','sessions','supplements','goals','expenses','tasks','habits','notes','occasions']) state[k] = state[k].filter(x => !x.sample);
+  for(const k of ['templates','sessions','supplements','goals','expenses','tasks','habits','notes','occasions','lists']) state[k] = state[k].filter(x => !x.sample);
   const used = new Set();
   for(const t of state.templates) for(const e of t.exercises) used.add(e.name.toLowerCase());
   for(const s of state.sessions) for(const e of s.exercises) used.add(e.name.toLowerCase());
@@ -3089,12 +3158,17 @@ function buildSampleData(today){
     {id: uid(), title:"Mom's birthday", date: Dates.make(1962, ...Dates.ymd(d(9)).slice(1)), yearly:true, sample:true},
     {id: uid(), title:'Wedding anniversary', date: Dates.make(2016, ...Dates.ymd(d(24)).slice(1)), yearly:true, sample:true}
   ];
-  return {templates, sessions, supplements, goals, expenses, tasks, habits, notes, occasions, exercises: [...names].map(n => ({name:n, sample:true}))};
+  const L = (text, done) => ({id: uid(), text, done: !!done});
+  const lists = [
+    {id: uid(), name:'Groceries', dash:true, sample:true, items:[L('Eggs'), L('Spinach'), L('Greek yogurt'), L('Chicken breast'), L('Bananas', true), L('Oats', true)]},
+    {id: uid(), name:'Weekend trip packing', dash:false, sample:true, items:[L('Phone charger'), L('Sunscreen'), L('Running shoes'), L('Swimsuit')]}
+  ];
+  return {templates, sessions, supplements, goals, expenses, tasks, habits, notes, occasions, lists, exercises: [...names].map(n => ({name:n, sample:true}))};
 }
 function loadSampleData(){
   clearSampleData();
   const s = normalizeState(Object.assign({settings: state.settings}, buildSampleData(Dates.today())));
-  for(const k of ['templates','sessions','supplements','goals','expenses','tasks','habits','notes','occasions']) state[k] = state[k].concat(s[k]);
+  for(const k of ['templates','sessions','supplements','goals','expenses','tasks','habits','notes','occasions','lists']) state[k] = state[k].concat(s[k]);
   for(const e of s.exercises) if(!state.exercises.some(x => x.name.toLowerCase() === e.name.toLowerCase())) state.exercises.push(e);
   commit(); toast('Sample data loaded — have a look around');
 }
@@ -3124,7 +3198,7 @@ function renderNav(){
 }
 function openDrawer(){ $('#drawer').classList.add('open'); $('#scrim').classList.add('show'); $('#menuBtn').setAttribute('aria-expanded', 'true'); const f = $('#drawer a'); if(f) f.focus(); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('show'); $('#menuBtn').setAttribute('aria-expanded', 'false'); }
-const VIEWS = {dashboard: viewDashboard, calendar: viewCalendar, workouts: viewWorkouts, supplements: viewSupplements, savings: viewSavings, expenses: viewExpenses, tasks: viewTasks, habits: viewHabits, notes: viewNotes, dates: viewDates, settings: viewSettings};
+const VIEWS = {dashboard: viewDashboard, calendar: viewCalendar, workouts: viewWorkouts, supplements: viewSupplements, savings: viewSavings, expenses: viewExpenses, tasks: viewTasks, habits: viewHabits, notes: viewNotes, lists: viewLists, dates: viewDates, settings: viewSettings};
 function banners(){
   let h = '';
   if(!Storage.ok) h += `<div class="banner" role="alert">${icon('warning')}<div class="t"><strong>Saving is turned off in this browser.</strong> This can happen in private browsing. You can still use the app, but changes will be lost when you close this page. Use Settings › Export backup to keep a copy.</div></div>`;
@@ -3289,6 +3363,27 @@ const ACT = {
       withUndo('Plan deleted', () => { g.plans = g.plans.filter(x => x.id !== el.dataset.x); });
   },
   toggleGoal(el){ ui.openGoals[el.dataset.id] = !ui.openGoals[el.dataset.id]; render(); },
+  newList(){ openListEditor(null); },
+  editList(el){ openListEditor(el.dataset.id); },
+  pinList(el){ const l = byId(state.lists, el.dataset.id); if(!l) return; l.dash = !l.dash; ui.refocus = `[data-act="pinList"][data-id="${l.id}"]`; commit(); toast(l.dash ? `${l.name} is now on the Dashboard` : `${l.name} removed from the Dashboard`); },
+  async delList(el){
+    const l = byId(state.lists, el.dataset.id); if(!l) return;
+    if(await confirmBox({title:'Delete list?', message:`“${esc(l.name)}” and its ${plural(l.items.length, 'item')} will be removed.`, ok:'Delete', danger:true}))
+      withUndo('List deleted', () => { state.lists = state.lists.filter(x => x.id !== l.id); });
+  },
+  delListItem(el){
+    const l = byId(state.lists, el.dataset.id); if(!l) return;
+    const idx = l.items.findIndex(i => i.id === el.dataset.x); if(idx < 0) return;
+    const gone = l.items.splice(idx, 1)[0];
+    commit(); toast('Item removed', () => { l.items.splice(idx, 0, gone); commit(); });
+  },
+  uncheckList(el){ const l = byId(state.lists, el.dataset.id); if(!l) return; l.items.forEach(i => { i.done = false; }); commit(); toast('All items unchecked'); },
+  clearList(el){
+    const l = byId(state.lists, el.dataset.id); if(!l) return;
+    const before = l.items.slice();
+    l.items = l.items.filter(i => !i.done);
+    commit(); toast(`Removed ${plural(before.length - l.items.length, 'checked item')}`, () => { l.items = before; commit(); });
+  },
   newOccasion(){ openOccasionEditor(null); },
   editOccasion(el){ openOccasionEditor(el.dataset.id); },
   delOccasion(el){ deleteOccasion(el.dataset.id); },
@@ -3342,7 +3437,7 @@ const ACT = {
   importData(){ $('#importFile').click(); },
   clearAll: clearAllData,
   async loadSample(){
-    const has = ['templates','supplements','goals','expenses','tasks','habits','notes','occasions'].some(k => state[k].some(x => x.sample));
+    const has = ['templates','supplements','goals','expenses','tasks','habits','notes','occasions','lists'].some(k => state[k].some(x => x.sample));
     if(has && !(await confirmBox({title:'Reload sample data?', message:'The existing sample items will be replaced with fresh ones. Your own items are not touched.', ok:'Reload'}))) return;
     loadSampleData();
   },
@@ -3379,6 +3474,13 @@ const CHG = {
     ui.refocus = `[data-chg="habit"][data-id="${h.id}"]`;
     commit();
   },
+  listItem(el){
+    const l = byId(state.lists, el.dataset.id); if(!l) return;
+    const i = l.items.find(x => x.id === el.dataset.x); if(!i) return;
+    i.done = el.checked;
+    ui.refocus = `[data-chg="listItem"][data-x="${i.id}"]`;
+    commit();
+  },
   name(el){ state.settings.name = str(el.value, 40); commit(); toast(state.settings.name ? `Hi, ${state.settings.name}!` : 'Name removed'); },
   units(el){ state.settings.units = oneOf(el.value, ['metric','imperial'], 'metric'); commit(); toast(`Showing weights in ${displayUnit()}`); },
   theme(el){ state.settings.theme = oneOf(el.value, ['light','dark','system'], 'system'); applyTheme(); commit(); },
@@ -3399,6 +3501,15 @@ const FORMS = {
     state.tasks.push({id: uid(), title: title.slice(0, 200), horizon: oneOf(form.querySelector('[name=horizon]').value, HORIZONS.map(h => h.id), 'today'), recurrence: null, done:false, completedAt:'', doneDates:{}, sample:false});
     ui.refocus = '[data-form="quickTask"] [name=title]';
     commit(); toast('Task added');
+  },
+  listAdd(form){
+    const l = byId(state.lists, form.dataset.id); if(!l) return;
+    const inp = form.querySelector('[name=item]');
+    const text = inp.value.trim();
+    if(!text){ inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
+    l.items.push({id: uid(), text: text.slice(0, 200), done:false});
+    ui.refocus = `[data-form="listAdd"][data-id="${l.id}"] [name=item]`;
+    commit();
   },
   addExercise(form){
     const inp = form.querySelector('[name=exname]');
